@@ -1,0 +1,199 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server celler server.",
+        "title": "Swagger Example API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/address/retrieval/{filename}": {
+            "get": {
+                "description": "Retrieve all address information in the specified format from a CSV file",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Property Information Retrieval",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of the CSV file",
+                        "name": "filename",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of address information",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.AddressInfoRow"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "File does not exist",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Get addresses infos failed",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/upload": {
+            "post": {
+                "description": "Accept a CSV file containing Japanese addresses and property information",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "Address"
+                ],
+                "summary": "CSV Upload",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "CSV file to upload",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Unable to retrieve file from request",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "File already exists",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    },
+                    "415": {
+                        "description": "Unsupported file format, only CSV files are allowed",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Save file failed",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.AddressInfoRow": {
+            "type": "object",
+            "properties": {
+                "banchi": {
+                    "description": "Lot number (Japanese: 番地)",
+                    "type": "string"
+                },
+                "building": {
+                    "description": "Building name (Japanese: 建物名)",
+                    "type": "string"
+                },
+                "chome": {
+                    "description": "Block number (Japanese: 丁目)",
+                    "type": "string"
+                },
+                "city": {
+                    "description": "City (Japanese: 市区町村)",
+                    "type": "string"
+                },
+                "full_address": {
+                    "description": "Complete address",
+                    "type": "string"
+                },
+                "go": {
+                    "description": "Number (Japanese: 号)",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Unique identifier for the address",
+                    "type": "string"
+                },
+                "land_area": {
+                    "description": "Land area (Japanese: 敷地面積)",
+                    "type": "string"
+                },
+                "nearest_station": {
+                    "description": "Nearest station (Japanese: 最寄駅)",
+                    "type": "string"
+                },
+                "prefecture": {
+                    "description": "Prefecture (Japanese: 都道府県)",
+                    "type": "string"
+                },
+                "price": {
+                    "description": "Price (Japanese: 価格)",
+                    "type": "string"
+                },
+                "property_type": {
+                    "description": "Property type (Japanese: 物件タイプ)",
+                    "type": "string"
+                },
+                "town": {
+                    "description": "Town (Japanese: 町名)",
+                    "type": "string"
+                }
+            }
+        },
+        "model.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "description": "Error is the human-readable error message.",
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    },
+    "externalDocs": {
+        "description": "OpenAPI",
+        "url": "https://swagger.io/resources/open-api/"
+    }
+}

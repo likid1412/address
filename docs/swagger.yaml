@@ -1,0 +1,138 @@
+basePath: /api/v1
+definitions:
+  model.AddressInfoRow:
+    properties:
+      banchi:
+        description: 'Lot number (Japanese: 番地)'
+        type: string
+      building:
+        description: 'Building name (Japanese: 建物名)'
+        type: string
+      chome:
+        description: 'Block number (Japanese: 丁目)'
+        type: string
+      city:
+        description: 'City (Japanese: 市区町村)'
+        type: string
+      full_address:
+        description: Complete address
+        type: string
+      go:
+        description: 'Number (Japanese: 号)'
+        type: string
+      id:
+        description: Unique identifier for the address
+        type: string
+      land_area:
+        description: 'Land area (Japanese: 敷地面積)'
+        type: string
+      nearest_station:
+        description: 'Nearest station (Japanese: 最寄駅)'
+        type: string
+      prefecture:
+        description: 'Prefecture (Japanese: 都道府県)'
+        type: string
+      price:
+        description: 'Price (Japanese: 価格)'
+        type: string
+      property_type:
+        description: 'Property type (Japanese: 物件タイプ)'
+        type: string
+      town:
+        description: 'Town (Japanese: 町名)'
+        type: string
+    type: object
+  model.ErrorResponse:
+    properties:
+      error:
+        description: Error is the human-readable error message.
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /address/retrieval/{filename}:
+    get:
+      description: Retrieve all address information in the specified format from a
+        CSV file
+      parameters:
+      - description: Name of the CSV file
+        in: path
+        name: filename
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Array of address information
+          schema:
+            items:
+              $ref: '#/definitions/model.AddressInfoRow'
+            type: array
+        "404":
+          description: File does not exist
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Get addresses infos failed
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Property Information Retrieval
+      tags:
+      - Address
+  /address/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Accept a CSV file containing Japanese addresses and property information
+      parameters:
+      - description: CSV file to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Unable to retrieve file from request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "409":
+          description: File already exists
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "415":
+          description: Unsupported file format, only CSV files are allowed
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Save file failed
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: CSV Upload
+      tags:
+      - Address
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
